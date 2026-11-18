@@ -11,5 +11,5 @@ class Base(DeclarativeBase):
     pass
 
 def init_db() -> None:
-    from src.models import DeviceModel, RepairOrderModel
+    from src.models import DeviceModel, RepairOrderModel, ClientModel, OrderPartModel, PartModel
     Base.metadata.create_all(engine)
