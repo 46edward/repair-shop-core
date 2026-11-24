@@ -1,20 +1,23 @@
-# Repair Shop Order Management System
+# Repair Shop Core
 
-## Tech Stack
-- Python 3.13
-- SQLAlchemy 2.0
-- Pytest
-- SQLite
+Модульное backend-ядро системы управления сервисным центром на Python 3.13 и SQLAlchemy 2.0. Дальнейшие возможности: подключения внешних интерфейсов (CLI, Telegram-бот, API/дашборд).
 
-## Quick Start
-```
-1. Clone the repository and create a virtual environment:
-    python3 -m venv venv
-    source venv/bin/activate
-2. Install dependencies
-    pip install -r requirements.txt
-3. Run app
-    python shop.py
-4. Run the test
-    python -m test -v
-```
+## Архитектура моего проекта
+
+Проект разделён на:
+
+* `src/models/`
+* `src/repositories/` — слой доступа к БД
+* `src/services/`
+* `src/exceptions.py`
+* `src/database.py`
+* `alembic/` — миграции схемы базы данных.
+* `tests/` — unit и интеграционные тесты на pytest
+
+## Стек моего проекта
+
+* **Язык:** Python 3.13
+* **ORM и миграции:** SQLAlchemy 2.0, Alembic
+* **Тестирование:** pytest
+* **Качество кода:** ruff, mypy
+* **CI:** GitHub Actions
