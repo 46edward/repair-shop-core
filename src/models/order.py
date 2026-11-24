@@ -1,13 +1,16 @@
 from typing import TYPE_CHECKING
-from sqlalchemy import String, Float, ForeignKey, Integer
+
+from sqlalchemy import Float, ForeignKey, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from src.database import Base
 from src.exceptions import InvalidCostError
 
 if TYPE_CHECKING:
-    from src.models.device import DeviceModel
     from src.models.client import ClientModel
+    from src.models.device import DeviceModel
     from src.models.part import PartModel
+
 
 class OrderPartModel(Base):
     __tablename__ = "order_parts"
@@ -20,6 +23,7 @@ class OrderPartModel(Base):
     order: Mapped["RepairOrderModel"] = relationship(back_populates="order_parts")
     part: Mapped["PartModel"] = relationship()
 
+
 class RepairOrderModel(Base):
     __tablename__ = "repair_orders"
 
@@ -29,11 +33,12 @@ class RepairOrderModel(Base):
     client_id: Mapped[int] = mapped_column(ForeignKey("clients.id"))
     client: Mapped["ClientModel"] = relationship(back_populates="orders")
 
-
     device_id: Mapped[int] = mapped_column(ForeignKey("devices.id"))
     device: Mapped["DeviceModel"] = relationship(back_populates="order")
 
-    order_parts: Mapped[list["OrderPartModel"]] = relationship(back_populates="order", cascade="all, delete-orphan")
+    order_parts: Mapped[list["OrderPartModel"]] = relationship(
+        back_populates="order", cascade="all, delete-orphan"
+    )
 
     @property
     def labor_cost(self) -> float:

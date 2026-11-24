@@ -1,10 +1,13 @@
 from typing import TYPE_CHECKING
-from sqlalchemy import String, Float
+
+from sqlalchemy import Float, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from src.database import Base
 
 if TYPE_CHECKING:
     from order import RepairOrderModel
+
 
 class ClientModel(Base):
     __tablename__ = "clients"
@@ -18,4 +21,3 @@ class ClientModel(Base):
 
     def __str__(self) -> str:
         return f"{self.full_name} ({self.phone}) - discount {self.discount_percent}%"
-

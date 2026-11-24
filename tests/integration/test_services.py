@@ -1,7 +1,9 @@
 import pytest
-from src.services import InventoryService, OrderService
+
+from src.exceptions import OrderNotFoundError, OutOfStockError
 from src.models import DeviceStatus
-from src.exceptions import OutOfStockError, OrderNotFoundError
+from src.services import InventoryService, OrderService
+
 
 def test_full_repair_lifecycle_and_loyalty_discount(db_session):
     inventory = InventoryService(db_session)
@@ -27,7 +29,6 @@ def test_full_repair_lifecycle_and_loyalty_discount(db_session):
     assert order1.calculate_total_cost() == 120.0
     assert inventory.get_part_by_sku("BAT-IP13").stock_quantity == 4
 
-
     order2 = orders.create_order(
         client_name="Иван Петров",
         client_phone="+3751112233",
@@ -41,6 +42,7 @@ def test_full_repair_lifecycle_and_loyalty_discount(db_session):
     assert order2.client.id == order1.client.id
     assert order2.client.discount_percent == 5.0
     assert order2.calculate_total_cost() == 95.0
+
 
 def test_add_part_out_of_stock_does_not_corrupt_order(db_session):
     inventory = InventoryService(db_session)

@@ -1,6 +1,8 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+
 from src.models import PartModel
+
 
 class PartRepository:
     def __init__(self, session: Session) -> None:

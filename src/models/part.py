@@ -1,13 +1,17 @@
-from sqlalchemy import String, Integer, Float
+from sqlalchemy import Float, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
+
 from src.database import Base
 from src.exceptions import OutOfStockError
+
 
 class PartModel(Base):
     __tablename__ = "parts"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    sku: Mapped[str] = mapped_column(String(50), unique=True, index=True) #номер артикула запчасти уникальный
+    sku: Mapped[str] = mapped_column(
+        String(50), unique=True, index=True
+    )  # номер артикула запчасти уникальный
     name: Mapped[str] = mapped_column(String(100))
     price: Mapped[float] = mapped_column(Float)
     stock_quantity: Mapped[int] = mapped_column(Integer, default=0)

@@ -1,6 +1,8 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-from src.models import RepairOrderModel, DeviceModel, DeviceStatus
+
+from src.models import DeviceModel, DeviceStatus, RepairOrderModel
+
 
 class OrderRepository:
     def __init__(self, session: Session) -> None:

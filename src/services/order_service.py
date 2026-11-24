@@ -1,14 +1,9 @@
 from sqlalchemy.orm import Session
-from src.models import (
-    ClientModel,
-    DeviceModel,
-    DeviceStatus,
-    RepairOrderModel,
-    OrderPartModel
-)
 
-from src.repositories import ClientRepository, OrderRepository, PartRepository
 from src.exceptions import OrderNotFoundError, PartNotFoundError
+from src.models import ClientModel, DeviceModel, DeviceStatus, OrderPartModel, RepairOrderModel
+from src.repositories import ClientRepository, OrderRepository, PartRepository
+
 
 class OrderService:
     def __init__(self, session: Session) -> None:
@@ -18,13 +13,13 @@ class OrderService:
         self.part_repo = PartRepository(session)
 
     def create_order(
-            self,
-            client_name: str,
-            client_phone: str,
-            device_type: str,
-            brand: str,
-            problem_description: str,
-            initial_labor_cost: float = 0.0,
+        self,
+        client_name: str,
+        client_phone: str,
+        device_type: str,
+        brand: str,
+        problem_description: str,
+        initial_labor_cost: float = 0.0,
     ) -> RepairOrderModel:
         client = self.client_repo.get_by_phone(client_phone)
         if not client:
@@ -35,7 +30,7 @@ class OrderService:
             device_type=device_type,
             brand=brand,
             problem_description=problem_description,
-            status=DeviceStatus.ACCEPTED
+            status=DeviceStatus.ACCEPTED,
         )
         order = RepairOrderModel(client=client, device=device)
         order.labor_cost = initial_labor_cost
@@ -45,10 +40,7 @@ class OrderService:
         return order
 
     def add_part_to_order(
-            self,
-            order_id: int,
-            part_sku: str,
-            quantity: int = 1
+        self, order_id: int, part_sku: str, quantity: int = 1
     ) -> RepairOrderModel:
         order = self.order_repo.get_by_id(order_id)
         if not order:
@@ -61,7 +53,8 @@ class OrderService:
         part.deduct_stock(quantity)
 
         existing_item = next(
-            (item for item in order.order_parts if item.part_id == part.id), None
+            (item for item in order.order_parts if item.part is part or item.part_ip == part.id),
+            None,
         )
 
         if existing_item:
@@ -69,10 +62,7 @@ class OrderService:
 
         else:
             order_part = OrderPartModel(
-                order = order,
-                part = part,
-                quantity = quantity,
-                unit_price = part.price
+                order=order, part=part, quantity=quantity, unit_price=part.price
             )
             self.session.add(order_part)
 
@@ -83,9 +73,7 @@ class OrderService:
         return order
 
     def complete_order(
-            self,
-            order_id: int,
-            final_labor_cost: float | None = None
+        self, order_id: int, final_labor_cost: float | None = None
     ) -> RepairOrderModel:
         order = self.order_repo.get_by_id(order_id)
         if not order:
@@ -97,9 +85,7 @@ class OrderService:
         order.device.update_status(DeviceStatus.COMPLETED)
 
         completed_count = sum(
-            1
-            for o in order.client.orders
-            if o.device.status == DeviceStatus.COMPLETED
+            1 for o in order.client.orders if o.device.status == DeviceStatus.COMPLETED
         )
 
         if completed_count >= 5 and order.client.discount_percent < 10.0:
@@ -114,4 +100,4 @@ class OrderService:
         order = self.order_repo.get_by_id(order_id)
         if not order:
             raise OrderNotFoundError(f"Заказ {order_id} не найден")
-        return order.get_order_info()
+        return str(order.get_order_info())

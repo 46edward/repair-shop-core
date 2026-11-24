@@ -7,9 +7,12 @@ engine = create_engine(DATABASE_URL, echo=False)
 
 SessionLocal = sessionmaker(bind=engine)
 
+
 class Base(DeclarativeBase):
     pass
 
+
 def init_db() -> None:
-    from src.models import DeviceModel, RepairOrderModel, ClientModel, OrderPartModel, PartModel
+    from src.models import ClientModel, DeviceModel, OrderPartModel, PartModel, RepairOrderModel  # noqa: F401
+
     Base.metadata.create_all(engine)
